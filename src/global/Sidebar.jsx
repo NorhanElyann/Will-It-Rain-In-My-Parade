@@ -14,9 +14,9 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   return (
-    <Box className="h-screen shadow-md">
+    <Box className="h-auto shadow-md">
       <ProSidebar collapsed={isCollapsed} width="165px">
-        <Menu iconShape="square" className="h-full flex flex-col">
+        <Menu iconShape="square" className="h-full flex flex-col !bg-white">
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
             icon={

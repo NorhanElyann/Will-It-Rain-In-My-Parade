@@ -21,7 +21,7 @@ const Topbar = () => {
 
       {/* Icons*/}
       <Box className="flex items-center space-x-2">
-        <IconButton t>
+        <IconButton>
           <NotificationsOutlinedIcon className="text-[var(--primary-dark-hover)]" />
         </IconButton>
         <IconButton>
