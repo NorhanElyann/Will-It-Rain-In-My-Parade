@@ -3,6 +3,7 @@ import L from "leaflet";
 import { useMap } from "react-leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import "leaflet-geosearch/dist/geosearch.css";
+import axios from "axios";
 
 const LeafletGeocoder = ({ onLocationSelected }) => {
   const map = useMap();
@@ -25,7 +26,7 @@ const LeafletGeocoder = ({ onLocationSelected }) => {
     map.addControl(searchControl);
     geocoderRef.current = searchControl;
 
-    //  Location selected from search
+    // 📍 Location selected from search
     map.on("geosearch/showlocation", (result) => {
       const { x, y, raw } = result.location;
       if (markerRef.current) map.removeLayer(markerRef.current);
@@ -47,17 +48,18 @@ const LeafletGeocoder = ({ onLocationSelected }) => {
       onLocationSelected?.({ lat: y, lng: x, label: placeName });
     });
 
-    //  Click on map
+    // 📍 Click on map
     map.on("click", async (e) => {
       const { lat, lng } = e.latlng;
       if (markerRef.current) map.removeLayer(markerRef.current);
 
       let placeName = `Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`;
       try {
-        const res = await fetch(
+        const res = await axios.get(
           `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
         );
-        const data = await res.json();
+
+        const data = res.data;
         if (data?.address) {
           const { city, road, country } = data.address;
           const locationName = data.name || road;
@@ -66,6 +68,7 @@ const LeafletGeocoder = ({ onLocationSelected }) => {
       } catch (err) {
         console.error("Reverse geocoding error:", err);
       }
+
       if (markerRef.current) {
         map.removeLayer(markerRef.current);
       }

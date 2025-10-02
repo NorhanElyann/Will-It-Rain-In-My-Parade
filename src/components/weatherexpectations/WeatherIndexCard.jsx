@@ -2,7 +2,7 @@ import { Card, CardContent, Typography } from "@mui/material";
 
 export default function WeatherIndexCard({ title, value }) {
   return (
-    <Card className="shadow-md bg-blue-50">
+    <Card className="shadow-md !bg-[var(--primary-light)]">
       <CardContent>
         <Typography variant="subtitle2" color="text.secondary">
           {title}
