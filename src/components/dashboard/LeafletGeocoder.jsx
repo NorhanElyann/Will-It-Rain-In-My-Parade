@@ -26,7 +26,7 @@ const LeafletGeocoder = ({ onLocationSelected }) => {
     map.addControl(searchControl);
     geocoderRef.current = searchControl;
 
-    // 📍 Location selected from search
+    //  Location selected from search
     map.on("geosearch/showlocation", (result) => {
       const { x, y, raw } = result.location;
       if (markerRef.current) map.removeLayer(markerRef.current);
@@ -48,7 +48,7 @@ const LeafletGeocoder = ({ onLocationSelected }) => {
       onLocationSelected?.({ lat: y, lng: x, label: placeName });
     });
 
-    // 📍 Click on map
+    // Click on map
     map.on("click", async (e) => {
       const { lat, lng } = e.latlng;
       if (markerRef.current) map.removeLayer(markerRef.current);
@@ -60,10 +60,8 @@ const LeafletGeocoder = ({ onLocationSelected }) => {
         );
 
         const data = res.data;
-        if (data?.address) {
-          const { city, road, country } = data.address;
-          const locationName = data.name || road;
-          placeName = `${locationName}, ${city || ""}, ${country || ""}`;
+        if (data?.display_name) {
+          placeName = placeName = data.display_name;
         }
       } catch (err) {
         console.error("Reverse geocoding error:", err);

@@ -9,25 +9,28 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const sampleData = [
-  { year: 2015, temp: 27.9, rain: 18 },
-  { year: 2016, temp: 29.3, rain: 40 },
-  { year: 2017, temp: 28.1, rain: 21 },
-  { year: 2018, temp: 28.3, rain: 19 },
-  { year: 2019, temp: 28.5, rain: 17 },
-  { year: 2020, temp: 28.6, rain: 12 },
-  { year: 2021, temp: 28.8, rain: 15 },
-  { year: 2022, temp: 29.0, rain: 20 },
-  { year: 2023, temp: 29.2, rain: 14 },
-  { year: 2024, temp: 29.3, rain: 16 },
-];
+const WeatherHistoryChart = ({ historicalData }) => {
+  const dummyData = [
+    { year: "2015", temperature: 0, rain: 0 },
+    { year: "2016", temperature: 0, rain: 0 },
+    { year: "2017", temperature: 0, rain: 0 },
+    { year: "2018", temperature: 0, rain: 0 },
+    { year: "2019", temperature: 0, rain: 0 },
+    { year: "2020", temperature: 0, rain: 0 },
+    { year: "2021", temperature: 0, rain: 0 },
+    { year: "2022", temperature: 0, rain: 0 },
+    { year: "2023", temperature: 0, rain: 0 },
+    { year: "2024", temperature: 0, rain: 0 },
+  ];
 
-const WeatherHistoryChart = () => {
+  const chartData =
+    historicalData && historicalData.length > 0 ? historicalData : dummyData;
+
   return (
-    <div className="w-full h-[300px] bg-white ">
+    <div className="ml-10 mb-10  h-[360px] !bg-[var(--primary-light)] p-4 rounded-xl shadow">
       <h2 className="text-lg font-semibold mb-4">Changes Rates Over 10Y</h2>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={sampleData}>
+        <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
           <YAxis
@@ -38,7 +41,7 @@ const WeatherHistoryChart = () => {
             yAxisId="right"
             orientation="right"
             label={{
-              value: "Rainfall (mm)",
+              value: "Rain Probability (%)",
               angle: -90,
               position: "insideRight",
             }}
@@ -48,7 +51,7 @@ const WeatherHistoryChart = () => {
           <Line
             yAxisId="left"
             type="monotone"
-            dataKey="temp"
+            dataKey="temperature"
             stroke="#1d4ed8"
             strokeWidth={2}
             activeDot={{ r: 6 }}

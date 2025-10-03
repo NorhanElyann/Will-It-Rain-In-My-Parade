@@ -8,7 +8,7 @@ import {
 } from "recharts";
 import { Card, CardContent, Typography } from "@mui/material";
 
-const WeatherChartExpectaions = ({ title, data, color }) => {
+export default function WeatherChartExpectaions({ title, data, color }) {
   return (
     <Card className="shadow-md !bg-[var(--primary-light)]">
       <CardContent>
@@ -31,6 +31,4 @@ const WeatherChartExpectaions = ({ title, data, color }) => {
       </CardContent>
     </Card>
   );
-};
-
-export default WeatherChartExpectaions;
+}

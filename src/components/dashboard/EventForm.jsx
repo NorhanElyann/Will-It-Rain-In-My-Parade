@@ -1,8 +1,6 @@
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 const EventForm = ({
-  eventType,
-  onEventTypeChange,
   selectedDate,
   onDateChange,
   selectedLocation,
@@ -16,21 +14,6 @@ const EventForm = ({
       }}
       className="flex items-center gap-2 bg-white "
     >
-      {/* Event Type */}
-      <div className="flex flex-col">
-        <label className="text-xs font-medium text-gray-600">Event Type</label>
-        <select
-          value={eventType}
-          onChange={(e) => onEventTypeChange(e.target.value)}
-          className="border rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
-        >
-          <option>Driving</option>
-          <option>Surfing</option>
-          <option>Diving</option>
-          <option>Fishing</option>
-        </select>
-      </div>
-
       {/* Location */}
       <div className="flex flex-col flex-1">
         <label className="text-xs font-medium text-gray-600">Location</label>
@@ -59,7 +42,7 @@ const EventForm = ({
       {/* Button */}
       <button
         type="submit"
-        className="flex flex-col mt-4 bg-sky-500 hover:bg-sky-600 text-white px-2 py-1 rounded-md text-sm font-medium"
+        className="cursor-pointer flex flex-col mt-4 bg-sky-500 hover:bg-sky-600 text-white px-2 py-1 rounded-md text-sm font-medium"
       >
         Check Weather
       </button>

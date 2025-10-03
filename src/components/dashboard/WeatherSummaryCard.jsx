@@ -1,19 +1,30 @@
-import { Card, CardContent, Typography, IconButton } from "@mui/material";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { Card, CardContent, Typography } from "@mui/material";
 
+function decodeHtmlEntity(str) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = str;
+  return txt.value;
+}
 const WeatherSummaryCard = ({
   selectedLocation,
   selectedDate,
-  outlook,
-  forecast,
+  weatherData,
+  loading,
+  error,
 }) => {
+  if (loading) return <p>Loading weather...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (!weatherData) {
+    return (
+      <p className="text-gray-500 text-center mt-15">
+        No data yet — Please select location & date, then click "Check Weather"
+      </p>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {/* Title */}
-      <Typography variant="h6" className="font-semibold text-center">
-        Will it rain in my parade?
-      </Typography>
 
       {/* Location + Date */}
       <div className="flex justify-between p-3 rounded-xl shadow-md bg-[var(--primary-light)]">
@@ -34,17 +45,23 @@ const WeatherSummaryCard = ({
       </div>
 
       {/* Seasonal Outlook */}
-      <Card className="shadow-md !bg-[var(--primary-light)]">
+      <Typography variant="p" className="font-semibold ">
+        Seasonal Outlook
+      </Typography>
+      <Card className="!mt-3 shadow-md !bg-[var(--primary-light)]">
         <CardContent className="flex justify-between items-center">
           <div>
-            <Typography variant="caption" color="text.secondary">
-              Seasonal Outlook
+            <Typography variant="caption" color="text.secondary !text-md">
+              Humidity
             </Typography>
-            <Typography variant="body1">{outlook}</Typography>
+            <Typography variant="body1">{weatherData.humidity}%</Typography>
+            <Typography variant="caption" color="text.secondary !text-md">
+              Rain
+            </Typography>
+            <Typography variant="body1">
+              {weatherData.rain_probability}
+            </Typography>
           </div>
-          <IconButton size="small">
-            <ArrowDropDownIcon />
-          </IconButton>
         </CardContent>
       </Card>
 
@@ -55,10 +72,36 @@ const WeatherSummaryCard = ({
             <Typography variant="caption" color="text.secondary">
               Weather Forecast
             </Typography>
-            <Typography variant="body1">{forecast.temp}°C</Typography>
-            <Typography variant="body1">{forecast.condition}</Typography>
+            <Typography variant="body1">{weatherData.temperature}°C</Typography>
           </div>
-          <WbSunnyIcon className="text-yellow-500" fontSize="large" />
+
+          <div className="flex space-x-2 text-3xl">
+            {weatherData.icons?.map((icon, idx) => (
+              <span key={idx}>{decodeHtmlEntity(icon)}</span>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* the wind */}
+      <Card className="shadow-md !bg-[var(--primary-light)]">
+        <CardContent className="flex justify-between items-center">
+          <div>
+            <Typography variant="caption" color="text.secondary">
+              Wind Speed
+            </Typography>
+            <Typography variant="body1">
+              {weatherData.wind_speed} m/s
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Wind Max
+            </Typography>
+            <Typography variant="body1">{weatherData.wind_max} m/s</Typography>
+            <Typography variant="caption" color="text.secondary">
+              Wind Range
+            </Typography>
+            <Typography variant="body1">{weatherData.wind_range}</Typography>
+          </div>
         </CardContent>
       </Card>
     </div>

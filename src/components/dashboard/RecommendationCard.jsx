@@ -1,27 +1,31 @@
-import { Card, CardContent, Typography, IconButton } from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { Card, CardContent, Typography } from "@mui/material";
 
-const RecommendationCard = ({ name, desc, time, image }) => {
+const RecommendationCard = ({
+  date,
+  temperature,
+  humidity,
+  wind,
+  weather_score,
+  suggestion,
+}) => {
   return (
     <Card className="shadow-sm !bg-[var(--primary-light)]">
-      <CardContent className="flex justify-between items-center">
-        <div className="flex-1">
-          <Typography variant="body1" className="">
-            {name}
-          </Typography>
-          <Typography variant="body2">{desc}</Typography>
-          <Typography variant="caption">{time}</Typography>
-        </div>
-        <div className="flex flex-col items-end">
-          <img
-            src={image}
-            alt={name}
-            className="w-16 h-16 rounded-md object-cover mb-1"
-          />
-          <IconButton size="small">
-            <MoreHorizIcon fontSize="small" />
-          </IconButton>
-        </div>
+      <CardContent>
+        <Typography variant="subtitle2" className="font-semibold">
+          {date}
+        </Typography>
+
+        <Typography variant="body2">
+          🌡️ Temp: {temperature}°C | 💧 Humidity: {humidity}%
+        </Typography>
+
+        <Typography variant="body2">
+          💨 Wind: {wind} m/s | ⭐ Score: {weather_score}
+        </Typography>
+
+        <Typography variant="body2" className="text-green-700 mt-1 font-medium">
+          {suggestion}
+        </Typography>
       </CardContent>
     </Card>
   );

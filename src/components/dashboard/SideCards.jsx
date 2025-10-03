@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 
 const SideCards = ({ selectedLocation }) => {
   return (
-    <div className="space-y-4 w-[280px]">
+    <div className="space-y-4 w-[280px] mt-3">
       {/* Location */}
-
       <Card className="shadow-md !bg-[var(--primary-light)]">
         <CardContent>
           <Typography variant="subtitle2" color="text.secondary">

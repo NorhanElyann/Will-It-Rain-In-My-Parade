@@ -9,42 +9,105 @@ import RecommendationCard from "../../components/dashboard/RecommendationCard";
 import { Typography } from "@mui/material";
 import { useDate } from "../../context/context";
 import { useLocation } from "../../context/context";
+import axios from "axios";
+import { getWeatherSuggestion } from "../../utils/suggestUtils";
 
 const dates = generateDates(2015, 2025);
 
 const Dashboard = () => {
-  const recommendations = [
-    {
-      name: "Stanley Beach",
-      desc: "Cooler temperatures (26–28°C), less crowded, great for a swim",
-      time: "Today (8–11 AM), Bring sunscreen",
-      image: "/stanley.jpg",
-    },
-    {
-      name: "Mandara Beach",
-      desc: "Golden light, family-friendly, breezy",
-      time: "Afternoon (3–6 PM)",
-      image: "/mandara.jpg",
-    },
-    {
-      name: "Agami Beach",
-      desc: "Spacious, quieter than city beaches",
-      time: "Weekend mornings",
-      image: "/agami.jpg",
-    },
-  ];
-
   const { selectedDate, setSelectedDate } = useDate();
   const { selectedLocation, setSelectedLocation } = useLocation();
-  const [eventType, setEventType] = useState("Driving");
 
-  const handleSubmit = () => {
-    console.log("Event:", eventType);
-    console.log("Date:", selectedDate);
-    console.log("Location:", selectedLocation);
-    alert(
-      `Check weather for:\nEvent: ${eventType}\nDate: ${selectedDate}\nLocation: ${selectedLocation?.label}`
-    );
+  const [weatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const [recommendations, setRecommendations] = useState([]);
+
+  const [historicalData, setHistoricalData] = useState([]);
+
+  const handleCheckWeather = async () => {
+    if (!selectedLocation || !selectedDate) return;
+
+    const date = new Date(selectedDate);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // 1- fetch weather for a day
+      const res = await axios.get(
+        `http://localhost:8000/api/weather-by-location`,
+        {
+          params: {
+            lat: selectedLocation.lat,
+            lon: selectedLocation.lng,
+            year,
+            mo: month,
+            dy: day,
+          },
+        }
+      );
+
+      setWeatherData(res.data);
+
+      // 2- fetch recommendations (best days)
+      const recRes = await axios.get(
+        `http://localhost:8000/api/best-visit-days`,
+        {
+          params: {
+            lat: selectedLocation.lat,
+            lon: selectedLocation.lng,
+            year,
+            mo: month,
+            dy: day,
+          },
+        }
+      );
+
+      // the first 4 days
+      const days = recRes.data.best_days.slice(0, 4);
+      const mapped = days.map((d) => {
+        return {
+          date: d.date,
+          temperature: d.temperature,
+          humidity: d.humidity,
+          wind: d.wind_speed,
+          weather_score: d.weather_score,
+          suggestion: getWeatherSuggestion(d),
+        };
+      });
+      setRecommendations(mapped);
+
+      // 3- fetch historical data (last 10 years)
+      const histRes = await axios.get(
+        `http://localhost:8000/api/historical-data`,
+        {
+          params: {
+            lat: selectedLocation.lat,
+            lon: selectedLocation.lng,
+            year,
+            mo: month,
+            dy: day,
+          },
+        }
+      );
+
+      const formatted = histRes.data.map((d) => ({
+        year: d.year,
+        temperature: d.temperature,
+        rain: parseFloat(d.rainProbability.replace("%", "")),
+      }));
+
+      setHistoricalData(formatted);
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,30 +122,38 @@ const Dashboard = () => {
         <Map onLocationSelected={setSelectedLocation} />
 
         <EventForm
-          eventType={eventType}
-          onEventTypeChange={setEventType}
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
           selectedLocation={selectedLocation}
-          onSubmit={handleSubmit}
+          onSubmit={handleCheckWeather}
         />
 
-        <WeatherChart selectedLocation={selectedLocation} />
-      </div>
-      <div className="col-span-3 space-y-6">
-        <WeatherSummaryCard
+        <WeatherChart
           selectedLocation={selectedLocation}
-          selectedDate={selectedDate}
-          outlook="Mild with low rainfall risk"
-          forecast={{ temp: 28, condition: "Mostly Clear Skies" }}
+          historicalData={historicalData}
         />
+      </div>
+
+      <div className="col-span-3 space-y-6 h-screen overflow-y-auto pr-2">
+        <div>
+          <Typography variant="h6" className="font-semibold text-center">
+            Will it rain in my parade?
+          </Typography>
+          <WeatherSummaryCard
+            selectedLocation={selectedLocation}
+            selectedDate={selectedDate}
+            weatherData={weatherData}
+            loading={loading}
+            error={error}
+          />
+        </div>
 
         {/* Recommendations */}
         <div>
           <Typography variant="subtitle1" className="font-semibold mb-2">
             Recommendations For You <br />
             <span className="text-green-600 text-sm">
-              (New {recommendations.length})
+              (Best {recommendations.length} days)
             </span>
           </Typography>
           <div className="space-y-2">
