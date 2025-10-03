@@ -40,32 +40,14 @@ const Dashboard = () => {
 
       // 1- fetch weather for a day
       const res = await axios.get(
-        `http://localhost:8000/api/weather-by-location`,
-        {
-          params: {
-            lat: selectedLocation.lat,
-            lon: selectedLocation.lng,
-            year,
-            mo: month,
-            dy: day,
-          },
-        }
+        `http://localhost:8000/api/weather-by-location?lat=${selectedLocation.lat}&lon=${selectedLocation.lng}&year=${year}&mo=${month}&dy=${day}`
       );
 
       setWeatherData(res.data);
 
       // 2- fetch recommendations (best days)
       const recRes = await axios.get(
-        `http://localhost:8000/api/best-visit-days`,
-        {
-          params: {
-            lat: selectedLocation.lat,
-            lon: selectedLocation.lng,
-            year,
-            mo: month,
-            dy: day,
-          },
-        }
+        `http://localhost:8000/api/best-visit-days?lat=${selectedLocation.lat}&lon=${selectedLocation.lng}&year=${year}&mo=${month}&dy=${day}`
       );
 
       // the first 4 days
@@ -84,16 +66,7 @@ const Dashboard = () => {
 
       // 3- fetch historical data (last 10 years)
       const histRes = await axios.get(
-        `http://localhost:8000/api/historical-data`,
-        {
-          params: {
-            lat: selectedLocation.lat,
-            lon: selectedLocation.lng,
-            year,
-            mo: month,
-            dy: day,
-          },
-        }
+        `http://localhost:8000/api/historical-data?lat=${selectedLocation.lat}&lon=${selectedLocation.lng}&year=${year}&mo=${month}&dy=${day}`
       );
 
       const formatted = histRes.data.map((d) => ({
